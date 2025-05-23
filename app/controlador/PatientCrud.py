@@ -38,12 +38,13 @@ def GetPatientByIdentifier(patientSystem,patientValue):
         return "notFound", None
     except Exception as e:
         return f"error encontrado: {str(e)}", None
-def DeletePatientById(patient_id: str):
+        
+def DeletePatientByIdentifier(patientSystem: str, patientValue: str):
     try:
-        result = collection.delete_one({"_id": ObjectId(patient_id)})
+        result = collection.delete_one({"identifier.system": patientSystem, "identifier.value": patientValue})
         if result.deleted_count == 1:
-            return "success", f"Patient with id {patient_id} deleted"
+            return "success", f"Patient with identifier {patientValue} deleted"
         else:
-            return "notFound", f"No patient found with id {patient_id}"
+            return "notFound", f"No patient found with identifier {patientValue}"
     except Exception as e:
         return "error", f"Exception occurred: {str(e)}"
