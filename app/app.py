@@ -1,6 +1,6 @@
 from fastapi import FastAPI, HTTPException, Request
 import uvicorn
-from app.controlador.PatientCrud import GetPatientById,WritePatient,GetPatientByIdentifier
+from app.controlador.PatientCrud import GetPatientById,WritePatient,GetPatientByIdentifier, DeletePatientByIdentifier
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI()
@@ -42,6 +42,16 @@ async def get_patient_by_identifier(system: str, value: str):
         raise HTTPException(status_code=404, detail="Patient not found")
     else:
         raise HTTPException(status_code=500, detail=f"Internal error. {status}")
+        
+@app.delete("/patient", response_model=dict)
+async def delete_patient_by_identifier(system: str, value: str):
+    status, message = DeletePatientByIdentifier(system, value)
+    if status == 'success':
+        return {"message": message}
+    elif status == 'notFound':
+        raise HTTPException(status_code=404, detail=message)
+    else:
+        raise HTTPException(status_code=500, detail=message)
         
 if __name__ == '__main__':
     import uvicorn
